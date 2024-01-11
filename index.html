@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Lyrics Player</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #lyrics-container {
+            padding: 20px; /* Add padding or margin as needed */
+            /*max-height: calc(100vh - 60px);*/
+            margin-bottom: 50px; /* Adjust as needed to give space for the button */
+            overflow-y: auto;
+        }
+
+        #playPauseButton {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #playPauseButton:hover {
+            background-color: #45a049;
+        }
+
+        html {
+            background-color: black;
+            color: white;
+        }
+    </style>
+    <script src="hooks_tagged_emotion_med.verses.js"></script>
+</head>
+<body>
+
+    <div id="lyrics-container"></div>
+    <button id="playPauseButton" onclick="togglePlayback()">Play</button>
+
+
+<script>
+    let currentIndex = 0;
+    let playbackInterval;
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function updatePlayPauseButton(text) {
+        document.getElementById('playPauseButton').innerText = text;
+    }
+
+    function renderLyric(index) {
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const newLyric = document.createElement('div');
+        newLyric.innerHTML = lyricData[index].lines;
+        newLyric.innerHTML += '<br>';
+        lyricsContainer.appendChild(newLyric);
+
+        // Scroll the container to show the new lyric
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+
+    function playNextLyric() {
+        currentIndex++;
+
+        if (currentIndex < lyricData.length) {
+            renderLyric(currentIndex);
+        } else {
+            // Stop playback when all lyrics are rendered
+            clearInterval(playbackInterval);
+            updatePlayPauseButton('Play'); // Update button text
+        }
+    }
+
+
+    function startPlayback() {
+        // Initialize playback
+        renderLyric(currentIndex);
+
+        // Schedule the next verse with a fixed delay (16,000 milliseconds)
+        playbackInterval = setInterval(playNextLyric, 16000);
+        updatePlayPauseButton('Pause'); // Update button text
+    }
+
+    function togglePlayback() {
+        if (playbackInterval) {
+            // Pause playback
+            clearInterval(playbackInterval);
+            playbackInterval = null;
+            currentIndex++;
+            updatePlayPauseButton('Play'); // Update button text
+        } else {
+            // Start playback
+            startPlayback();
+        }
+    }
+
+
+
+    // Initial render
+    shuffleArray(lyricData);
+    // startPlayback()
+
+</script>
+</body>
+</html>
